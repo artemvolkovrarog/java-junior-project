@@ -13,11 +13,11 @@ public class Client {
                 final Scanner in = new Scanner(System.in)
         ) {
             while (true) {
-                output.writeUTF("/chid obama");
-                output.writeUTF("/snd hello guys and girls!");
                 String userInput = in.nextLine();
                 output.writeUTF(userInput);
                 output.flush();
+//                String answer = input.readUTF();
+//                System.out.println(answer);
             }
         } catch (IOException e) {
             e.printStackTrace(System.err);
