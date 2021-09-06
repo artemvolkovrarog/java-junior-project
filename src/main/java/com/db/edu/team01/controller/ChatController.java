@@ -30,7 +30,7 @@ public class ChatController {
         String payload = input[1];
 
         switch (command) {
-            case Enum.valueOf(CMD_SEND.body):
+            case CMD_SEND.body:
                 System.out.println("Sending your message...");
                 sendMessage(payload);
                 break;
@@ -38,7 +38,7 @@ public class ChatController {
                 System.out.println("Getting chat history...");
                 getHistory();
                 break;
-            case CMD_IDENTIFY.body:
+            case CMD_IDENTIFY:
                 System.out.println("Identifying...");
                 setUserName(payload);
                 return;
