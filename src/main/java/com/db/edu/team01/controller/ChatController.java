@@ -6,6 +6,7 @@ import com.db.edu.team01.save.Saver;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
+import static com.db.edu.team01.controller.Command.*;
 
 public class ChatController {
     private final DataOutputStream output;
@@ -29,15 +30,15 @@ public class ChatController {
         String payload = input[1];
 
         switch (command) {
-            case Command.CMD_SEND.body:
+            case Enum.valueOf(CMD_SEND.body):
                 System.out.println("Sending your message...");
                 sendMessage(payload);
-                return;
-            case Command.CMD_HISTORY.body:
+                break;
+            case CMD_HISTORY.body:
                 System.out.println("Getting chat history...");
                 getHistory();
-                return;
-            case Command.CMD_IDENTIFY.body:
+                break;
+            case CMD_IDENTIFY.body:
                 System.out.println("Identifying...");
                 setUserName(payload);
                 return;
