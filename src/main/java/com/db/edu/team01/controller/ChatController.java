@@ -6,19 +6,21 @@ import com.db.edu.team01.save.Saver;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
-import static com.db.edu.team01.controller.Command.*;
 
 public class ChatController {
+    private static final String CMD_SEND = "/snd";
+    private static final String CMD_HISTORY = "/hist";
+    private static final String CMD_IDENTIFY = "/chid";
     private final DataOutputStream output;
     private String userName;
-    private FileSaver;
+    private Saver fileSaver;
 
     public ChatController(DataOutputStream output) {
         this.output = output;
         this.userName = null;
     }
 
-    public void parser(String msg) throws IOException {
+    public void parseMessage(String msg) throws IOException {
         String[] input = msg.split(" ");
 
         // Check that command has one argument
@@ -30,32 +32,38 @@ public class ChatController {
         String payload = input[1];
 
         switch (command) {
-            case CMD_SEND.body:
+            case CMD_SEND:
                 System.out.println("Sending your message...");
                 sendMessage(payload);
                 break;
-            case CMD_HISTORY.body:
+            case CMD_HISTORY:
                 System.out.println("Getting chat history...");
                 getHistory();
                 break;
             case CMD_IDENTIFY:
                 System.out.println("Identifying...");
                 setUserName(payload);
-                return;
+                break;
+            default:
+                break;
         }
     }
 
     private void sendMessage(String msg) {
         if (userName == null ) {
-            output.writeUTF("Firstly, provide your name");
+            try {
+                output.writeUTF("Firstly, provide your name");
+            } catch (IOException e) {
+                System.out.println("Error. Please try again");
+            }
             return;
         }
         writeMessage(msg);
-        FileSaver.save(msg, userName);
+        fileSaver.save(msg, userName);
     }
 
     private void getHistory() throws IOException {
-        List<String> lines = FileSaver.getHistory();
+        List<String> lines = fileSaver.getHistory();
         for (String line : lines) {
             output.writeUTF(line);
         }

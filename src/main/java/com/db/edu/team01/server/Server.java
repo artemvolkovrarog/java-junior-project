@@ -20,7 +20,7 @@ public class Server {
 
                 while (true) {
                     final String read = input.readUTF();
-                    controller.sendMsg(read);
+                    controller.parseMessage(read);
                 }
 
             } catch (IOException e) {
