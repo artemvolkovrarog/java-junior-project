@@ -1,4 +1,4 @@
-package com.db.edu.server;
+package com.db.edu.team01.server;
 
 import java.io.*;
 import java.net.ServerSocket;
