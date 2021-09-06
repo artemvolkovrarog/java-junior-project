@@ -2,6 +2,7 @@ package com.db.edu.team01.controller;
 
 import com.db.edu.team01.decorator.Decorator;
 import com.db.edu.team01.save.Saver;
+import com.db.edu.team01.save.SaverException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class ChatController {
         }
     }
 
-    private void sendMessage(String msg) {
+    private void sendMessage(String msg) throws SaverException {
         if (userName == null ) {
             try {
                 output.writeUTF("Firstly, provide your name");
