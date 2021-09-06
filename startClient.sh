@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "Starting Chat Client"
+java -jar ./target/team01-1.0-SNAPSHOT.jar
