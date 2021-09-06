@@ -17,8 +17,8 @@ public class Saver {
         try (BufferedWriter out = new BufferedWriter(
                 new OutputStreamWriter(
                         new BufferedOutputStream(
-                                new FileOutputStream(source))))) {
-            out.write(Decorator.getFormattedStr(message, clientName));
+                                new FileOutputStream(source, true))))) {
+            out.write(Decorator.getFormattedStr(message, clientName) + System.lineSeparator());
 
         } catch (IOException e) {
             throw new SaverException("Could not save message to ", e);

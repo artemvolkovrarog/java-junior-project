@@ -22,7 +22,7 @@ public class ChatController {
     }
 
     public void parseMessage(String msg) throws IOException {
-        String[] input = msg.split(" ", 1);
+        String[] input = msg.split(" ", 2);
 
         String command = input[0];
         String payload = input[1];
@@ -69,6 +69,7 @@ public class ChatController {
         String formattedStr = Decorator.getFormattedStr(msg, userName);
         try {
             output.writeUTF(formattedStr);
+//            output.flush();
         } catch (IOException e) {
             System.out.println("Error in writing message. Repeat pls");
         }

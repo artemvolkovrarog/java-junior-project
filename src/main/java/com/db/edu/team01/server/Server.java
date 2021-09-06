@@ -9,7 +9,7 @@ import java.net.Socket;
 public class Server {
     public static void main(String[] args) {
         try (final ServerSocket listener = new ServerSocket(10_000)) {
-            listener.setSoTimeout(50000);
+//            listener.setSoTimeout(5000000);
             try (
                     final Socket connection = listener.accept();
                     final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
