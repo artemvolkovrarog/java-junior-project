@@ -22,12 +22,7 @@ public class ChatController {
     }
 
     public void parseMessage(String msg) throws IOException {
-        String[] input = msg.split(" ");
-
-        // Check that command has one argument
-        if (input.length != 2 ) {
-            throw new IllegalArgumentException("Command should have one argument");
-        }
+        String[] input = msg.split(" ", 1);
 
         String command = input[0];
         String payload = input[1];
