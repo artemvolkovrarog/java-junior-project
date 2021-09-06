@@ -11,14 +11,14 @@ import static com.db.edu.team01.controller.Command.*;
 public class ChatController {
     private final DataOutputStream output;
     private String userName;
-    private FileSaver;
+    private Saver fileSaver;
 
     public ChatController(DataOutputStream output) {
         this.output = output;
         this.userName = null;
     }
 
-    public void parser(String msg) throws IOException {
+    public void parseMessage(String msg) throws IOException {
         String[] input = msg.split(" ");
 
         // Check that command has one argument
@@ -41,21 +41,27 @@ public class ChatController {
             case CMD_IDENTIFY:
                 System.out.println("Identifying...");
                 setUserName(payload);
-                return;
+                break;
+            default:
+                break;
         }
     }
 
     private void sendMessage(String msg) {
         if (userName == null ) {
-            output.writeUTF("Firstly, provide your name");
+            try {
+                output.writeUTF("Firstly, provide your name");
+            } catch (IOException e) {
+                System.out.println("Error. Please try again");
+            }
             return;
         }
         writeMessage(msg);
-        FileSaver.save(msg, userName);
+        fileSaver.save(msg, userName);
     }
 
     private void getHistory() throws IOException {
-        List<String> lines = FileSaver.getHistory();
+        List<String> lines = fileSaver.getHistory();
         for (String line : lines) {
             output.writeUTF(line);
         }
