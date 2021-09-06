@@ -2,6 +2,7 @@ package com.db.edu.team01.controller;
 
 import com.db.edu.team01.decorator.Decorator;
 import com.db.edu.team01.save.Saver;
+import com.db.edu.team01.save.SaverException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -45,17 +46,17 @@ public class ChatController {
         }
     }
 
-    private void sendMessage(String msg) {
+    private void sendMessage(String msg) throws SaverException {
         if (userName == null ) {
             output.writeUTF("Firstly, provide your name");
             return;
         }
         writeMessage(msg);
-        FileSaver.save(msg, userName);
+        Saver.save(msg, userName);
     }
 
     private void getHistory() throws IOException {
-        List<String> lines = FileSaver.getHistory();
+        List<String> lines = Saver.getHistory();
         for (String line : lines) {
             output.writeUTF(line);
         }
