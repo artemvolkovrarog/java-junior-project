@@ -1,6 +1,7 @@
 package com.db.edu.team01.controller;
 
-import com.db.edu.team01.formatter.Formatter;
+import com.db.edu.team01.decorator.Decorator;
+import com.db.edu.team01.save.Saver;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class ChatController {
     }
 
     private void writeMessage(String msg) {
-        String formattedStr = Formatter.getFormattedStr(msg, userName);
+        String formattedStr = Decorator.getFormattedStr(msg, userName);
         try {
             output.writeUTF(formattedStr);
         } catch (IOException e) {
