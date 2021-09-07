@@ -91,7 +91,7 @@
                         <param>com.db.edu.team01*</param>
                     </targetClasses>
                     <targetTests>
-                        <param>com.db.edu.team01.utest*</param>
+                        <param>com.db.edu.team01*</param>
                     </targetTests>
                 </configuration>
             </plugin>
