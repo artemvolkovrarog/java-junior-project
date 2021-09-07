@@ -26,7 +26,12 @@ public class ChatController {
         fileSaver = new Saver("messageBase");
     }
 
-    public void parseMessage(String msg) throws IOException {
+    public void handleInput(String input) throws IOException {
+        Message message = parseMessage(input);
+        sendCommand(message);
+    }
+
+    private Message parseMessage(String msg) {
         String[] input = msg.split(" ", 2);
         String payload;
 
@@ -37,10 +42,14 @@ public class ChatController {
             payload = "";
         }
 
-        switch (command) {
+        return new Message(command, payload);
+    }
+
+    private void sendCommand(Message message) throws IOException {
+        switch (message.getCommand()) {
             case CMD_SEND:
                 System.out.println("Sending your message...");
-                sendMessage(payload);
+                sendMessage(message.getPayload());
                 break;
             case CMD_HISTORY:
                 System.out.println("Getting chat history...");
@@ -48,7 +57,7 @@ public class ChatController {
                 break;
             case CMD_IDENTIFY:
                 System.out.println("Identifying...");
-                setUserName(payload);
+                setUserName(message.getPayload());
                 break;
             default:
                 output.writeUTF("Unknown command, try again");
@@ -57,8 +66,9 @@ public class ChatController {
         }
     }
 
+
     private void sendMessage(String msg) throws SaverException {
-        if (userName == null ) {
+        if (userName == null) {
             try {
                 output.writeUTF("Firstly, provide your name");
                 output.flush();
@@ -74,8 +84,7 @@ public class ChatController {
     private void getHistory() throws IOException {
         List<String> lines = fileSaver.getHistory();
 
-        String result = lines.stream()
-                    .collect(Collectors.joining(responseSeparator));
+        String result = String.join(responseSeparator, lines);
 
         output.writeUTF(result);
         output.flush();
