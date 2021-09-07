@@ -50,6 +50,7 @@ public class ChatController {
                 break;
             default:
                 output.writeUTF("Unknown command, try again");
+                output.flush();
                 break;
         }
     }
@@ -72,7 +73,7 @@ public class ChatController {
         List<String> lines = fileSaver.getHistory();
 
         String result = lines.stream()
-                .collect(Collectors.joining(responseSeparator));
+                    .collect(Collectors.joining(responseSeparator));
 
         output.writeUTF(result);
         output.flush();

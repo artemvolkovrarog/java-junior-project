@@ -15,7 +15,7 @@ public class Server {
                     final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
                     final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
             ) {
-
+                System.out.println("Server is running.");
                 ChatController controller = new ChatController(output);
 
                 while (true) {
