@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Saver {
-    private String fileName = "messageBase";
+    private String fileName;
 
     public Saver(String fileName) {
         this.fileName = fileName;
