@@ -6,6 +6,7 @@ import com.db.edu.team01.save.SaverException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,9 @@ public class ChatController {
     private static final String CMD_SEND = "/snd";
     private static final String CMD_HISTORY = "/hist";
     private static final String CMD_IDENTIFY = "/chid";
+    private static ArrayList<DataOutputStream> outStreams = new ArrayList<>();
+    private static final Object addStreamMonitor = new Object();
+    private static final Object sendMessageMonitor = new Object();
 
     private final DataOutputStream output;
     private final String responseSeparator = "&sep&";
@@ -24,6 +28,7 @@ public class ChatController {
         this.userName = null;
 
         fileSaver = new Saver("messageBase");
+        addMonitor(output);
     }
 
     public void parseMessage(String msg) throws IOException {
@@ -57,7 +62,7 @@ public class ChatController {
         }
     }
 
-    private void sendMessage(String msg) throws SaverException {
+    private void sendMessage(String msg) throws IOException {
         if (userName == null ) {
             try {
                 output.writeUTF("Firstly, provide your name");
@@ -67,7 +72,8 @@ public class ChatController {
             }
             return;
         }
-        writeMessage(msg);
+//        writeMessage(msg);
+        sendMsgToAllUsers(msg);
         fileSaver.save(msg, userName);
     }
 
@@ -99,6 +105,24 @@ public class ChatController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void addMonitor(DataOutputStream outStream) {
+        synchronized (addStreamMonitor) {
+            outStreams.add(outStream);
+        }
+    }
+
+    private void sendMsgToAllUsers(String msg) throws IOException {
+        String formattedStr = Decorator.getFormattedStr(msg, userName);
+
+        synchronized (sendMessageMonitor) {
+            for (DataOutputStream out : outStreams) {
+                out.writeUTF(formattedStr);
+                out.flush();
+            }
+        }
+
     }
 
 
