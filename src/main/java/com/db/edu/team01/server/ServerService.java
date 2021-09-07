@@ -22,7 +22,7 @@ public class ServerService implements Runnable {
 
             while (true) {
                 final String read = input.readUTF();
-                controller.parseMessage(read);
+                controller.handleInput(read);
             }
 
         } catch (IOException e) {
