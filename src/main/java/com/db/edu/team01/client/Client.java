@@ -12,15 +12,21 @@ public class Client {
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
                 final Scanner in = new Scanner(System.in)
         ) {
-            while (true) {
-                String userInput = in.nextLine();
-                output.writeUTF(userInput);
-                output.flush();
-//                String answer = input.readUTF();
-//                System.out.println(answer);
-            }
+            listenToClient(in, output);
         } catch (IOException e) {
             e.printStackTrace(System.err);
+        }
+    }
+
+    public static void sendMessage(DataOutputStream out, String userInput) throws IOException {
+        out.writeUTF(userInput);
+        out.flush();
+    }
+
+    private static void listenToClient(Scanner in, DataOutputStream out) throws IOException {
+        while (true) {
+            String userInput = in.nextLine();
+            sendMessage(out, userInput);
         }
     }
 }
