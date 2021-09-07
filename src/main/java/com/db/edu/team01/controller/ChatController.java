@@ -31,7 +31,7 @@ public class ChatController {
         sendCommand(message);
     }
 
-    private Message parseMessage(String msg) {
+    Message parseMessage(String msg) {
         String[] input = msg.split(" ", 2);
         String payload;
 
@@ -45,7 +45,7 @@ public class ChatController {
         return new Message(command, payload);
     }
 
-    private void sendCommand(Message message) throws IOException {
+    void sendCommand(Message message) throws IOException {
         switch (message.getCommand()) {
             case CMD_SEND:
                 System.out.println("Sending your message...");
@@ -100,7 +100,7 @@ public class ChatController {
         }
     }
 
-    private void setUserName(String userName) {
+    void setUserName(String userName) {
         this.userName = userName;
         try {
             output.writeUTF("Added user");
@@ -109,6 +109,4 @@ public class ChatController {
             e.printStackTrace();
         }
     }
-
-
 }
