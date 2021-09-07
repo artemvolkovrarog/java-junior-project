@@ -2,16 +2,20 @@ package com.db.edu.team01.controller;
 
 import com.db.edu.team01.decorator.Decorator;
 import com.db.edu.team01.save.Saver;
+import com.db.edu.team01.save.SaverException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ChatController {
     private static final String CMD_SEND = "/snd";
     private static final String CMD_HISTORY = "/hist";
     private static final String CMD_IDENTIFY = "/chid";
+
     private final DataOutputStream output;
+    private final String responseSeparator = "&sep&";
     private String userName;
     private Saver fileSaver;
 
@@ -21,15 +25,15 @@ public class ChatController {
     }
 
     public void parseMessage(String msg) throws IOException {
-        String[] input = msg.split(" ");
-
-        // Check that command has one argument
-        if (input.length != 2 ) {
-            throw new IllegalArgumentException("Command should have one argument");
-        }
+        String[] input = msg.split(" ", 2);
+        String payload;
 
         String command = input[0];
-        String payload = input[1];
+        if (input.length > 1) {
+            payload = input[1];
+        } else {
+            payload = "";
+        }
 
         switch (command) {
             case CMD_SEND:
@@ -45,14 +49,16 @@ public class ChatController {
                 setUserName(payload);
                 break;
             default:
+                output.writeUTF("Unknown command, try again");
                 break;
         }
     }
 
-    private void sendMessage(String msg) {
+    private void sendMessage(String msg) throws SaverException {
         if (userName == null ) {
             try {
                 output.writeUTF("Firstly, provide your name");
+                output.flush();
             } catch (IOException e) {
                 System.out.println("Error. Please try again");
             }
@@ -64,15 +70,19 @@ public class ChatController {
 
     private void getHistory() throws IOException {
         List<String> lines = fileSaver.getHistory();
-        for (String line : lines) {
-            output.writeUTF(line);
-        }
+
+        String result = lines.stream()
+                .collect(Collectors.joining(responseSeparator));
+
+        output.writeUTF(result);
+        output.flush();
     }
 
     private void writeMessage(String msg) {
         String formattedStr = Decorator.getFormattedStr(msg, userName);
         try {
             output.writeUTF(formattedStr);
+            output.flush();
         } catch (IOException e) {
             System.out.println("Error in writing message. Repeat pls");
         }
@@ -80,6 +90,12 @@ public class ChatController {
 
     private void setUserName(String userName) {
         this.userName = userName;
+        try {
+            output.writeUTF("Added user");
+            output.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
