@@ -22,6 +22,8 @@ public class ChatController {
     public ChatController(DataOutputStream output) {
         this.output = output;
         this.userName = null;
+
+        fileSaver = new Saver("messageBase");
     }
 
     public void parseMessage(String msg) throws IOException {

@@ -9,9 +9,13 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Saver {
-    static final String fileName = "messageBase";
+    private String fileName = "messageBase";
 
-    public static void save(String message, String clientName) throws SaverException {
+    public Saver(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void save(String message, String clientName) throws SaverException {
         File source = new File(fileName);
 
         try (BufferedWriter out = new BufferedWriter(
@@ -25,7 +29,7 @@ public class Saver {
         }
     }
 
-    public static List<String> getHistory() {
+    public List<String> getHistory() {
         Path testFile = Paths.get(fileName);
         List<String> lines = null;
 
