@@ -1,8 +1,5 @@
-package com.db.edu.team01.utest;
+package com.db.edu.team01.client;
 
-import com.db.edu.team01.client.Client;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.DataOutputStream;
@@ -10,18 +7,7 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-public class ClientTest implements SysoutCaptureAndAssertionAbility{
-    @BeforeEach
-    public void setUpSystemOut() {
-        resetOut();
-        captureSysout();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        resetOut();
-    }
-
+public class ClientTest {
 
     @Test
     public void shouldSendMessageToServer() throws IOException {
