@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
+    private static final String responseSeparator = "&sep&";
+
     public static void main(String[] args) {
         try (
                 final Socket connection = new Socket("localhost", 10_000);
@@ -12,7 +14,11 @@ public class Client {
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
                 final Scanner in = new Scanner(System.in)
         ) {
-            listenToClient(in, output);
+            while (true) {
+                listenToClient(in, output);
+                listenToServer(input);
+            }
+
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
@@ -24,9 +30,15 @@ public class Client {
     }
 
     private static void listenToClient(Scanner in, DataOutputStream out) throws IOException {
-        while (true) {
-            String userInput = in.nextLine();
-            sendMessage(out, userInput);
+        String userInput = in.nextLine();
+        sendMessage(out, userInput);
+    }
+
+    private static void listenToServer(DataInputStream input) throws IOException {
+        String[] answer = input.readUTF().split(responseSeparator);
+
+        for (String line : answer) {
+            System.out.println(line);
         }
     }
 }
