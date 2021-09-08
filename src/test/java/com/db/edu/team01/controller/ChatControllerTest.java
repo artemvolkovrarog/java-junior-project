@@ -4,13 +4,15 @@ import org.junit.jupiter.api.Test;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class ChatControllerTest {
     private DataOutputStream outputMock = mock(DataOutputStream.class);
-    private ChatController chatController = new ChatController(outputMock);
+    private Socket socket = mock(Socket.class);
+    private ChatController chatController = new ChatController(outputMock, socket);
 
     @Test
     public void shouldHandleCorrectInput() throws IOException {

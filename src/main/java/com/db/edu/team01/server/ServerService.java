@@ -26,7 +26,7 @@ public class ServerService implements Runnable {
                     return;
 
                 read = input.readUTF();
-                controller.parseMessage(read);
+                controller.handleInput(read);
             }
         } catch (IOException e) {
             System.out.println("Exception: " + e.getMessage());
