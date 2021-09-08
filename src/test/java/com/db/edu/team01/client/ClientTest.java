@@ -9,13 +9,13 @@ import static org.mockito.Mockito.*;
 
 public class ClientTest {
 
-    @Test
-    public void shouldSendMessageToServer() throws IOException {
-        DataOutputStream outputMock = mock(DataOutputStream.class);
-        String message = "/snd hi";
-
-        Client.sendMessage(outputMock, message);
-
-        verify(outputMock, times(1)).flush();
-    }
+//    @Test
+//    public void shouldSendMessageToServer() throws IOException {
+//        DataOutputStream outputMock = mock(DataOutputStream.class);
+//        String message = "/snd hi";
+//
+//        Client.sendMessage(outputMock, message);
+//
+//        verify(outputMock, times(1)).flush();
+//    }
 }

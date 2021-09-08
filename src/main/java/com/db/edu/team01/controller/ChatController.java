@@ -6,6 +6,8 @@ import com.db.edu.team01.save.SaverException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,25 +15,29 @@ public class ChatController {
     private static final String CMD_SEND = "/snd";
     private static final String CMD_HISTORY = "/hist";
     private static final String CMD_IDENTIFY = "/chid";
+    private static final String CMD_EXIT = "/exit";
+
+    private static final ArrayList<DataOutputStream> outStreams = new ArrayList<>();
+    private static final Object addStreamMonitor = new Object();
+    private static final Object sendMessageMonitor = new Object();
+    private static final Object deleteOutputMonitor = new Object();
 
     private final DataOutputStream output;
     private final String responseSeparator = "&sep&";
+    private final Saver fileSaver;
+    private final Socket connection;
     private String userName;
-    private Saver fileSaver;
 
-    public ChatController(DataOutputStream output) {
+    public ChatController(DataOutputStream output, Socket connection) {
         this.output = output;
+        this.connection = connection;
         this.userName = null;
 
         fileSaver = new Saver("messageBase");
+        addMonitor(output);
     }
 
-    public void handleInput(String input) throws IOException {
-        Message message = parseMessage(input);
-        sendCommand(message);
-    }
-
-    Message parseMessage(String msg) {
+    public void parseMessage(String msg) throws IOException {
         String[] input = msg.split(" ", 2);
         String payload;
 
@@ -42,14 +48,10 @@ public class ChatController {
             payload = "";
         }
 
-        return new Message(command, payload);
-    }
-
-    void sendCommand(Message message) throws IOException {
-        switch (message.getCommand()) {
+        switch (command) {
             case CMD_SEND:
                 System.out.println("Sending your message...");
-                sendMessage(message.getPayload());
+                sendMessage(payload);
                 break;
             case CMD_HISTORY:
                 System.out.println("Getting chat history...");
@@ -57,7 +59,14 @@ public class ChatController {
                 break;
             case CMD_IDENTIFY:
                 System.out.println("Identifying...");
-                setUserName(message.getPayload());
+                setUserName(payload);
+                break;
+            case CMD_EXIT:
+                System.out.println("Closing connection...");
+                output.writeUTF("Closing connection");
+                output.flush();
+                deleteOutput(output);
+                connection.close();
                 break;
             default:
                 output.writeUTF("Unknown command, try again");
@@ -66,9 +75,8 @@ public class ChatController {
         }
     }
 
-
-    private void sendMessage(String msg) throws SaverException {
-        if (userName == null) {
+    private void sendMessage(String msg) throws IOException {
+        if (userName == null ) {
             try {
                 output.writeUTF("Firstly, provide your name");
                 output.flush();
@@ -77,14 +85,16 @@ public class ChatController {
             }
             return;
         }
-        writeMessage(msg);
+//        writeMessage(msg);
+        sendMsgToAllUsers(msg);
         fileSaver.save(msg, userName);
     }
 
     private void getHistory() throws IOException {
         List<String> lines = fileSaver.getHistory();
 
-        String result = String.join(responseSeparator, lines);
+        String result = lines.stream()
+                    .collect(Collectors.joining(responseSeparator));
 
         output.writeUTF(result);
         output.flush();
@@ -100,7 +110,7 @@ public class ChatController {
         }
     }
 
-    void setUserName(String userName) {
+    private void setUserName(String userName) {
         this.userName = userName;
         try {
             output.writeUTF("Added user");
@@ -109,4 +119,30 @@ public class ChatController {
             e.printStackTrace();
         }
     }
+
+    private void addMonitor(DataOutputStream outStream) {
+        synchronized (addStreamMonitor) {
+            outStreams.add(outStream);
+        }
+    }
+
+    private void sendMsgToAllUsers(String msg) throws IOException {
+        String formattedStr = Decorator.getFormattedStr(msg, userName);
+
+        synchronized (sendMessageMonitor) {
+            for (DataOutputStream out : outStreams) {
+                out.writeUTF(formattedStr);
+                out.flush();
+            }
+        }
+
+    }
+
+    private void deleteOutput(DataOutputStream output) {
+        synchronized (deleteOutputMonitor) {
+            outStreams.remove(output);
+        }
+    }
+
+
 }
