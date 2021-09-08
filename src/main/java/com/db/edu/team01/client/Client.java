@@ -30,12 +30,12 @@ public class Client {
                 es.shutdownNow();
                 System.exit(0);
             } catch (ExecutionException e) {
-                System.out.println("Failure while executiong future-thread. " + e.getMessage());
+                System.out.println(e.getMessage());
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failure while closing socket.");
+            e.printStackTrace(System.err);
         } catch (InterruptedException e) {
-            throw new RuntimeException("Can't wait for future-thread. Terminating...");
+            e.printStackTrace();
         }
     }
 }
