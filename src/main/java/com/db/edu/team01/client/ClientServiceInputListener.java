@@ -1,18 +1,19 @@
 package com.db.edu.team01.client;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientServiceInputListener implements Runnable {
-    private final Object writeMonitor;
-    private final Scanner in = new Scanner(System.in);
     private final DataOutputStream output;
+    private final Scanner in;
+    private final Socket connection;
 
-    public ClientServiceInputListener(Object writeMonitor, DataOutputStream output) {
-        this.writeMonitor = writeMonitor;
+    public ClientServiceInputListener(DataOutputStream output, Scanner in, Socket connection) {
         this.output = output;
+        this.in = in;
+        this.connection = connection;
     }
 
     @Override
@@ -21,7 +22,7 @@ public class ClientServiceInputListener implements Runnable {
             try {
                 listenToClient();
             } catch (IOException e) {
-                System.out.println("Can't listen to client" + e.getMessage());
+                System.out.println("Can't listen to client " + e.getMessage());
             }
         }
     }
@@ -31,13 +32,16 @@ public class ClientServiceInputListener implements Runnable {
             if (in.hasNext()) {
                 String userInput = in.nextLine();
 
-                synchronized (writeMonitor) {
-                    output.writeUTF(userInput);
-                    output.flush();
+                output.writeUTF(userInput);
+                output.flush();
+
+                if (userInput.equals("/exit")) {
+                    connection.close();
+                    Thread.currentThread().interrupt();
                 }
             }
         } catch (IllegalStateException e) {
-            System.out.println("vse ploxo");
+            System.out.println("Scanner is dead");
         }
     }
 }

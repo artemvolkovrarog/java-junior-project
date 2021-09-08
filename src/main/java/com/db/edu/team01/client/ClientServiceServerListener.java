@@ -3,51 +3,49 @@ package com.db.edu.team01.client;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.concurrent.Callable;
 
-public class ClientServiceServerListener implements Runnable {
+public class ClientServiceServerListener implements Callable<Integer> {
     private final String responseSeparator = "&sep&";
-    private final Object writeMonitor;
-    private DataInputStream input;
-    private Socket connection;
-    private Scanner inScan;
+    private final DataInputStream input;
+    private final Socket connection;
 
-    public ClientServiceServerListener(Object writeMonitor, DataInputStream input, Socket connection) {
-        this.writeMonitor = writeMonitor;
+    public ClientServiceServerListener(DataInputStream input, Socket connection) {
         this.input = input;
         this.connection = connection;
-        try {
-            this.inScan = new Scanner(connection.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
-    public void run() {
+    public Integer call() {
         while (true) {
             try {
                 listenToServer();
             } catch (IOException e) {
-                System.out.println("Can't listen to server");
+                if (connection.isClosed()) {
+                    System.out.println("Return from server-future");
+                    Thread.currentThread().interrupt();
+                    return 1;
+                } else {
+                    System.out.println("Exception: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     private void listenToServer() throws IOException {
-        if (inScan.hasNext()) {
-            String answer = input.readUTF();
-            writeServerAnswer(answer);
-        }
+//        if (connection.isClosed())
+//            Thread.currentThread().interrupt();
+
+        String answer = input.readUTF();
+        writeServerAnswer(answer);
     }
 
     private void writeServerAnswer(String answer) {
-        synchronized (writeMonitor) {
-            String[] lines = answer.split(responseSeparator);
+        String[] lines = answer.split(responseSeparator);
 
-            for (String line : lines) {
-                System.out.println(line);
-            }
+        for (String line : lines) {
+            System.out.println(line);
         }
     }
 }
