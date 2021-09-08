@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.concurrent.Callable;
 
 public class ClientServiceServerListener implements Callable<Integer> {
-    private final String responseSeparator = "&sep&";
+    private static final String responseSeparator = "&sep&";
     private final DataInputStream input;
     private final Socket connection;
 
@@ -34,9 +34,6 @@ public class ClientServiceServerListener implements Callable<Integer> {
     }
 
     private void listenToServer() throws IOException {
-//        if (connection.isClosed())
-//            Thread.currentThread().interrupt();
-
         String answer = input.readUTF();
         writeServerAnswer(answer);
     }
