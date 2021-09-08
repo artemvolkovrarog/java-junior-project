@@ -4,7 +4,6 @@ import com.db.edu.team01.controller.ChatController;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class ServerService implements Runnable {
     Socket connection;
@@ -19,18 +18,18 @@ public class ServerService implements Runnable {
                 final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
         ) {
-            ChatController controller = new ChatController(output);
-            Scanner inScan = new Scanner(connection.getInputStream());
+            ChatController controller = new ChatController(output, connection);
 
+            String read;
             while (true) {
-                if (inScan.hasNext()) {
-                    final String read = input.readUTF();
-                    controller.parseMessage(read);
-                }
-            }
+                if (connection.isClosed())
+                    return;
 
+                read = input.readUTF();
+                controller.parseMessage(read);
+            }
         } catch (IOException e) {
-            e.printStackTrace(System.err);
+            System.out.println("Exception: " + e.getMessage());
         }
     }
 }

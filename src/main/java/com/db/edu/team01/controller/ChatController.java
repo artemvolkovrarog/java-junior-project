@@ -6,6 +6,7 @@ import com.db.edu.team01.save.SaverException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,17 +15,22 @@ public class ChatController {
     private static final String CMD_SEND = "/snd";
     private static final String CMD_HISTORY = "/hist";
     private static final String CMD_IDENTIFY = "/chid";
-    private static ArrayList<DataOutputStream> outStreams = new ArrayList<>();
+    private static final String CMD_EXIT = "/exit";
+
+    private static final ArrayList<DataOutputStream> outStreams = new ArrayList<>();
     private static final Object addStreamMonitor = new Object();
     private static final Object sendMessageMonitor = new Object();
+    private static final Object deleteOutputMonitor = new Object();
 
     private final DataOutputStream output;
     private final String responseSeparator = "&sep&";
+    private final Saver fileSaver;
+    private final Socket connection;
     private String userName;
-    private Saver fileSaver;
 
-    public ChatController(DataOutputStream output) {
+    public ChatController(DataOutputStream output, Socket connection) {
         this.output = output;
+        this.connection = connection;
         this.userName = null;
 
         fileSaver = new Saver("messageBase");
@@ -54,6 +60,13 @@ public class ChatController {
             case CMD_IDENTIFY:
                 System.out.println("Identifying...");
                 setUserName(payload);
+                break;
+            case CMD_EXIT:
+                System.out.println("Closing connection...");
+                output.writeUTF("Closing connection");
+                output.flush();
+                deleteOutput(output);
+                connection.close();
                 break;
             default:
                 output.writeUTF("Unknown command, try again");
@@ -123,6 +136,12 @@ public class ChatController {
             }
         }
 
+    }
+
+    private void deleteOutput(DataOutputStream output) {
+        synchronized (deleteOutputMonitor) {
+            outStreams.remove(output);
+        }
     }
 
 
