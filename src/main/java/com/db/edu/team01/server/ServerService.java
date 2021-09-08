@@ -18,15 +18,18 @@ public class ServerService implements Runnable {
                 final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
         ) {
-            ChatController controller = new ChatController(output);
+            ChatController controller = new ChatController(output, connection);
 
+            String read;
             while (true) {
-                final String read = input.readUTF();
-                controller.handleInput(read);
-            }
+                if (connection.isClosed())
+                    return;
 
+                read = input.readUTF();
+                controller.parseMessage(read);
+            }
         } catch (IOException e) {
-            e.printStackTrace(System.err);
+            System.out.println("Exception: " + e.getMessage());
         }
     }
 }
