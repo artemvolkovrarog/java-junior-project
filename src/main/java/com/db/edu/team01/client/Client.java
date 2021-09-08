@@ -26,7 +26,7 @@ public class Client {
             try {
                 serverListener.get();
                 connection.close();
-                System.out.println("kernel is closed--");
+                System.out.println("kernel is closed.");
                 es.shutdownNow();
                 System.exit(0);
             } catch (ExecutionException e) {
