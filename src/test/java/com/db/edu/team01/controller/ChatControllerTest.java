@@ -1,5 +1,6 @@
 package com.db.edu.team01.controller;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.DataOutputStream;
@@ -8,6 +9,7 @@ import java.net.Socket;
 
 import static org.mockito.Mockito.*;
 
+@Disabled
 public class ChatControllerTest {
     private DataOutputStream outputMock = mock(DataOutputStream.class);
     private Socket socket = mock(Socket.class);
