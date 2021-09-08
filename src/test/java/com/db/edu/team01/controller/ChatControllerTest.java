@@ -6,7 +6,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class ChatControllerTest {
@@ -30,7 +29,10 @@ public class ChatControllerTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenUsernameIsNull() {
-        //TODO
+    public void shouldHandleLongPayload() throws IOException {
+        Message message = mock(Message.class);
+        when(message.payloadIsValid()).thenReturn(false);
+        chatController.handleInput("test");
+        verify(outputMock, times(2));
     }
 }
