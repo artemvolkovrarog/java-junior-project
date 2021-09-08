@@ -12,7 +12,7 @@ class SaverTest {
     private final String fileName = "testmessagebase.txt";
     File source = new File(fileName);
 
-    void resetFile(String fileName){
+    void resetFile(){
         try {
             PrintWriter writer = new PrintWriter(fileName);
             writer.print("");
@@ -24,7 +24,7 @@ class SaverTest {
 
     @Test
     public void saveMessageToFileCorrectly() throws IOException {
-        resetFile(fileName);
+        resetFile();
         source.createNewFile();
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(
@@ -39,7 +39,7 @@ class SaverTest {
     }
     @Test
     public void getHistoryCorrectly() throws IOException {
-        resetFile(fileName);
+        resetFile();
         source.createNewFile();
         Saver saver = new Saver(fileName);
         String firstName = "firstName";
