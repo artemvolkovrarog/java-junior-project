@@ -2,14 +2,12 @@ package com.db.edu.team01.controller;
 
 import com.db.edu.team01.decorator.Decorator;
 import com.db.edu.team01.save.Saver;
-import com.db.edu.team01.save.SaverException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ChatController {
     private static final String CMD_SEND = "/snd";
@@ -94,7 +92,7 @@ public class ChatController {
             }
             return;
         }
-//        writeMessage(msg);
+
         sendMsgToAllUsers(msg);
         fileSaver.save(msg, userName);
     }
@@ -106,16 +104,6 @@ public class ChatController {
 
         output.writeUTF(result);
         output.flush();
-    }
-
-    private void writeMessage(String msg) {
-        String formattedStr = Decorator.getFormattedStr(msg, userName);
-        try {
-            output.writeUTF(formattedStr);
-            output.flush();
-        } catch (IOException e) {
-            System.out.println("Error in writing message. Repeat pls");
-        }
     }
 
     private void setUserName(String userName) {
