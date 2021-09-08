@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Decorator {
-    private static final int messageLength = 60;
+    private static final int messageLength = 90;
 
     public static String getFormattedStr(String msg, String userName) {
         StringBuilder result = new StringBuilder();

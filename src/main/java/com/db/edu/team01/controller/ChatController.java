@@ -37,7 +37,14 @@ public class ChatController {
 
     public void handleInput(String input) throws IOException {
         Message message = parseMessage(input);
-        sendCommand(message);
+        if (message.payloadIsValid()) {
+            System.out.println("Valid message");
+            sendCommand(message);
+        } else {
+            System.out.println("Invalid message");
+            output.writeUTF("Input should be less than 150 symbols.");
+            output.flush();
+        }
     }
 
     Message parseMessage(String msg) {
@@ -83,7 +90,7 @@ public class ChatController {
     }
 
     private void sendMessage(String msg) throws IOException {
-        if (userName == null ) {
+        if (userName == null) {
             try {
                 output.writeUTF("Firstly, provide your name");
                 output.flush();

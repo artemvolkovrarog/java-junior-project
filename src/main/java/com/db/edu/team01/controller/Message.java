@@ -9,12 +9,15 @@ public class Message {
         this.payload = payload;
     }
 
-
     public String getCommand() {
         return command;
     }
 
     public String getPayload() {
         return payload;
+    }
+
+    public boolean payloadIsValid() {
+        return this.payload.length() <= 150;
     }
 }
