@@ -27,5 +27,8 @@ public class ChatControllerTest {
         verify(outputMock, times(1)).writeUTF("Unknown command, try again");
     }
 
-
+    @Test
+    public void shouldThrowExceptionWhenUsernameIsNull() {
+        //TODO
+    }
 }
